@@ -2310,41 +2310,6 @@ impl<T> Drop for MoveItems<T> {
 #[deprecated = "replaced by Rev<MoveItems<'a, T>>"]
 pub type RevMoveItems<T> = Rev<MoveItems<T>>;
 
-impl<A> FromIterator<A> for ~[A] {
-    fn from_iter<T: Iterator<A>>(mut iterator: T) -> ~[A] {
-        let mut xs: Vec<A> = iterator.collect();
-
-        // Must shrink so the capacity is the same as the length. The length of
-        // the ~[T] vector must exactly match the length of the allocation.
-        xs.shrink_to_fit();
-
-        let len = xs.len();
-        assert!(len == xs.capacity());
-        let data = xs.as_mut_ptr();
-
-        let data_size = len.checked_mul(&mem::size_of::<A>());
-        let data_size = data_size.expect("overflow in from_iter()");
-        let size = mem::size_of::<RawVec<()>>().checked_add(&data_size);
-        let size = size.expect("overflow in from_iter()");
-
-
-        // This is some terribly awful code. Note that all of this will go away
-        // with DST because creating ~[T] from Vec<T> will just be some pointer
-        // swizzling.
-        unsafe {
-            let ret = malloc_raw(size) as *mut RawVec<()>;
-
-            (*ret).fill = len * mem::nonzero_size_of::<A>();
-            (*ret).alloc = len * mem::nonzero_size_of::<A>();
-            ptr::copy_nonoverlapping_memory(&mut (*ret).data as *mut _ as *mut u8,
-                                            data as *u8,
-                                            data_size);
-            xs.set_len(0); // ownership has been transferred
-            cast::transmute(ret)
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use prelude::*;
