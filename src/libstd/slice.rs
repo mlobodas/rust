@@ -579,19 +579,19 @@ pub mod traits {
         fn gt(&self, other: &~[T]) -> bool { self.as_slice() > other.as_slice() }
     }
 
-    impl<'a,T:Clone, V: Vector<T>> Add<V, ~[T]> for &'a [T] {
+    impl<'a,T:Clone, V: Vector<T>> Add<V, Vec<T>> for &'a [T] {
         #[inline]
-        fn add(&self, rhs: &V) -> ~[T] {
+        fn add(&self, rhs: &V) -> Vec<T> {
             let mut res = Vec::with_capacity(self.len() + rhs.as_slice().len());
             res.push_all(*self);
             res.push_all(rhs.as_slice());
-            res.move_iter().collect()
+            res
         }
     }
 
-    impl<T:Clone, V: Vector<T>> Add<V, ~[T]> for ~[T] {
+    impl<T:Clone, V: Vector<T>> Add<V, Vec<T>> for ~[T] {
         #[inline]
-        fn add(&self, rhs: &V) -> ~[T] {
+        fn add(&self, rhs: &V) -> Vec<T> {
             self.as_slice() + rhs.as_slice()
         }
     }
