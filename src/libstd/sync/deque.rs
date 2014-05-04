@@ -405,7 +405,7 @@ mod tests {
     use rand::Rng;
     use sync::atomics::{AtomicBool, INIT_ATOMIC_BOOL, SeqCst,
                         AtomicUint, INIT_ATOMIC_UINT};
-    use slice;
+    use vec;
 
     #[test]
     fn smoke() {
@@ -601,7 +601,7 @@ mod tests {
         let mut pool = BufferPool::<(int, uint)>::new();
         let (mut w, s) = pool.deque();
 
-        let (threads, hits) = slice::unzip(range(0, NTHREADS).map(|_| {
+        let (threads, hits) = vec::unzip(range(0, NTHREADS).map(|_| {
             let s = s.clone();
             let unique_box = box AtomicUint::new(0);
             let thread_box = unsafe {
