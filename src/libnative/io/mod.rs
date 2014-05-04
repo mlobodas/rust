@@ -183,7 +183,7 @@ impl rtio::IoFactory for IoFactory {
         pipe::UnixStream::connect(path, timeout).map(|s| box s as ~RtioPipe:Send)
     }
     fn get_host_addresses(&mut self, host: Option<&str>, servname: Option<&str>,
-                          hint: Option<ai::Hint>) -> IoResult<~[ai::Info]> {
+                          hint: Option<ai::Hint>) -> IoResult<Vec<ai::Info>> {
         addrinfo::GetAddrInfoRequest::run(host, servname, hint)
     }
 
@@ -248,7 +248,7 @@ impl rtio::IoFactory for IoFactory {
         timer::Timer::new().map(|t| box t as ~RtioTimer:Send)
     }
     fn spawn(&mut self, config: ProcessConfig)
-            -> IoResult<(~RtioProcess:Send, ~[Option<~RtioPipe:Send>])> {
+            -> IoResult<(~RtioProcess:Send, Vec<Option<~RtioPipe:Send>>)> {
         process::Process::spawn(config).map(|(p, io)| {
             (box p as ~RtioProcess:Send,
              io.move_iter().map(|p| p.map(|p| box p as ~RtioPipe:Send)).collect())
