@@ -89,10 +89,9 @@ use iter::{Rev, DoubleEndedIterator, ExactSize};
 use libc;
 use num::Saturating;
 use option::{None, Option, Some};
-use ptr;
 use from_str::FromStr;
 use slice;
-use slice::{OwnedVector, ImmutableVector, MutableVector, CloneableVector};
+use slice::{ImmutableVector, MutableVector, CloneableVector};
 use slice::{Vector};
 use vec::Vec;
 use default::Default;
@@ -1339,9 +1338,8 @@ pub mod raw {
     use iter::Iterator;
     use libc;
     use ptr::RawPtr;
-    use ptr;
     use raw::Slice;
-    use slice::{MutableVector, ImmutableVector, OwnedVector, Vector};
+    use slice::ImmutableVector;
     use str::{is_utf8, StrSlice};
 
     /// Create a Rust string from a *u8 buffer of the given length

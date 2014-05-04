@@ -1867,10 +1867,7 @@ pub mod raw {
     use cast::transmute;
     use iter::Iterator;
     use ptr::RawPtr;
-    use ptr;
     use raw::Slice;
-    use slice::{MutableVector, OwnedVector};
-    use vec::Vec;
 
     /**
      * Form a slice from a pointer and length (as a number of units,
