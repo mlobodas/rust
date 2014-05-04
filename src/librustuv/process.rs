@@ -40,7 +40,7 @@ impl Process {
     /// Returns either the corresponding process object or an error which
     /// occurred.
     pub fn spawn(io_loop: &mut UvIoFactory, config: process::ProcessConfig)
-                -> Result<(~Process, ~[Option<PipeWatcher>]), UvError>
+                -> Result<(~Process, Vec<Option<PipeWatcher>>), UvError>
     {
         let cwd = config.cwd.map(|s| s.to_c_str());
         let mut io = vec![config.stdin, config.stdout, config.stderr];
@@ -103,7 +103,7 @@ impl Process {
         });
 
         match ret {
-            Ok(p) => Ok((p, ret_io.move_iter().collect())),
+            Ok(p) => Ok((p, ret_io)),
             Err(e) => Err(e),
         }
     }
