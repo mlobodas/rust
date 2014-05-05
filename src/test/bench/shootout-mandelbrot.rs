@@ -20,6 +20,7 @@ static LIMIT: f64 = 2.0;
 
 fn main() {
     let args = std::os::args();
+    let args = args.as_slice();
     let (w, mut out) = if args.len() < 2 {
         println!("Test mode: do not dump the image because it's not utf8, \
                   which interferes with the test runner.");
