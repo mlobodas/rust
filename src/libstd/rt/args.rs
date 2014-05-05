@@ -21,11 +21,10 @@
 //! FIXME #7756: This has a lot of C glue for lack of globals.
 
 use option::Option;
-#[cfg(not(test))] use vec::Vec;
+use vec::Vec;
 #[cfg(test)] use option::{Some, None};
 #[cfg(test)] use realstd;
 #[cfg(test)] use realargs = realstd::rt::args;
-#[cfg(test)] use realstd::vec::Vec;
 
 /// One-time global initialization.
 #[cfg(not(test))]
@@ -41,7 +40,7 @@ pub unsafe fn init(argc: int, argv: **u8) { realargs::init(argc, argv) }
 #[cfg(not(test))] pub fn take() -> Option<Vec<~[u8]>> { imp::take() }
 #[cfg(test)]      pub fn take() -> Option<Vec<~[u8]>> {
     match realargs::take() {
-        realstd::option::Some(a) => Some(a),
+        realstd::option::Some(v) => Some(unsafe{ ::cast::transmute(v) }),
         realstd::option::None => None,
     }
 }
@@ -50,13 +49,13 @@ pub unsafe fn init(argc: int, argv: **u8) { realargs::init(argc, argv) }
 ///
 /// It is an error if the arguments already exist.
 #[cfg(not(test))] pub fn put(args: Vec<~[u8]>) { imp::put(args) }
-#[cfg(test)]      pub fn put(args: Vec<~[u8]>) { realargs::put(args) }
+#[cfg(test)]      pub fn put(args: Vec<~[u8]>) { realargs::put(unsafe { ::cast::transmute(args) }) }
 
 /// Make a clone of the global arguments.
 #[cfg(not(test))] pub fn clone() -> Option<Vec<~[u8]>> { imp::clone() }
 #[cfg(test)]      pub fn clone() -> Option<Vec<~[u8]>> {
     match realargs::clone() {
-        realstd::option::Some(a) => Some(a),
+        realstd::option::Some(v) => Some(unsafe { ::cast::transmute(v) }),
         realstd::option::None => None,
     }
 }
@@ -150,7 +149,7 @@ mod imp {
             // Preserve the actual global state.
             let saved_value = take();
 
-            let expected = box [bytes!("happy").to_owned(), bytes!("today?").to_owned()];
+            let expected = vec![bytes!("happy").to_owned(), bytes!("today?").to_owned()];
 
             put(expected.clone());
             assert!(clone() == Some(expected.clone()));
