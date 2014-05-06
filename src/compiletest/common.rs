@@ -8,6 +8,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use regex::Regex;
+
 #[deriving(Clone, Eq)]
 pub enum mode {
     mode_compile_fail,
@@ -54,7 +56,7 @@ pub struct config {
     pub run_ignored: bool,
 
     // Only run tests that match this filter
-    pub filter: Option<~str>,
+    pub filter: Option<Regex>,
 
     // Write out a parseable log of tests that were run
     pub logfile: Option<Path>,
